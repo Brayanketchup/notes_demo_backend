@@ -38,7 +38,8 @@ router.get('/:id', async (req, res) => {
 
 // POST 
 router.post('/', async (req, res) => {
-  const { title, content, dueBy } = req.body;
+  const { title, content, dueBy, tags } = req.body;
+
   if (!title) {
     return res.status(400).json({ error: 'Title is required' });
   }
@@ -47,14 +48,17 @@ router.post('/', async (req, res) => {
     const newNote = await Note.create({
       title,
       content: content || '',
-      dueBy:   dueBy ? new Date(dueBy) : null,
+      dueBy: dueBy ? new Date(dueBy) : null,
+      tags: tags || [] // make sure your Note model supports this
     });
+
     return res.status(201).json(newNote);
   } catch (err) {
     console.error('Error creating note:', err);
     return res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 // PUT 
 router.put('/:id', async (req, res) => {
