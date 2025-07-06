@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
       title,
       content: content || '',
       dueBy: dueBy ? new Date(dueBy) : null,
-      tags: tags || [] // make sure your Note model supports this
+      tags: tags || [] 
     });
 
     return res.status(201).json(newNote);
