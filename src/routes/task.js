@@ -38,7 +38,7 @@ router.get('/:id', async (req, res) => {
 
 // POST 
 router.post('/', async (req, res) => {
-  const { title, content, dueBy, tags } = req.body;
+  const { title, content, tags } = req.body;
 
   if (!title) {
     return res.status(400).json({ error: 'Title is required' });
@@ -48,8 +48,6 @@ router.post('/', async (req, res) => {
     const newTask = await Task.create({
       title,
       content: content || '',
-      dueBy: dueBy ? new Date(dueBy) : null,
-      tags: tags || [] 
     });
 
     return res.status(201).json(newTask);
@@ -63,7 +61,7 @@ router.post('/', async (req, res) => {
 // PUT 
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { title, content, dueBy } = req.body;
+  const { title, content } = req.body;
 
   if (!Types.ObjectId.isValid(id)) {
     return res.status(400).json({ error: 'Invalid task ID' });
@@ -75,7 +73,6 @@ router.put('/:id', async (req, res) => {
       {
         ...(title !== undefined && { title }),
         ...(content !== undefined && { content }),
-        ...(dueBy !== undefined && { dueBy: dueBy ? new Date(dueBy) : null }),
       },
       { new: true, runValidators: true }
     );
