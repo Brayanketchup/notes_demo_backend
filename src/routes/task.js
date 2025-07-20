@@ -35,6 +35,17 @@ router.get('/deleted', async (req, res) => {
   }
 });
 
+router.get('/archived', async (req, res) => {
+  try {
+    
+    const deletedTasks = await Task.find({ archived: true });
+    res.json(deletedTasks);
+  } catch (err) {
+    console.error('Error fetching deleted tasks:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 // GET by id
 router.get('/:id', async (req, res) => {
@@ -59,16 +70,16 @@ router.get('/:id', async (req, res) => {
 
 // POST 
 router.post('/', async (req, res) => {
-  const { title, content, tags } = req.body;
+  const { task, deadline } = req.body;
 
-  if (!title) {
-    return res.status(400).json({ error: 'Title is required' });
+  if (!task) {
+    return res.status(400).json({ error: 'Task is required' });
   }
 
   try {
     const newTask = await Task.create({
-      title,
-      content: content || '',
+      task: task || '',
+      deadline: deadline || null,
     });
 
     return res.status(201).json(newTask);
@@ -82,7 +93,7 @@ router.post('/', async (req, res) => {
 // PUT 
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { title, content } = req.body;
+  const { task } = req.body;
 
   if (!Types.ObjectId.isValid(id)) {
     return res.status(400).json({ error: 'Invalid task ID' });
@@ -92,8 +103,7 @@ router.put('/:id', async (req, res) => {
     const updated = await Task.findByIdAndUpdate(
       id,
       {
-        ...(title !== undefined && { title }),
-        ...(content !== undefined && { content }),
+        ...(task !== undefined && { task }),
       },
       { new: true, runValidators: true }
     );

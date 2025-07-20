@@ -35,6 +35,15 @@ router.get('/deleted', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+router.get('/archived', async (req, res) => {
+  try {
+    const deletedNotes = await Note.find({ archived: true });
+    res.json(deletedNotes);
+  } catch (err) {
+    console.error('Error fetching deleted notes:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // GET by id
 router.get('/:id', async (req, res) => {
